@@ -105,7 +105,7 @@ const Step1 = ({ onNext, updateRegisterInfo, registerInfo, showErrorModal }) => 
 
       <div className="text-center mt-3">
         <Button
-          type="button" // Use type="button" to prevent form submission
+          type="button" 
           variant="light"
           className="text-dark border border-dark"
           onClick={handleNext}
@@ -161,21 +161,28 @@ const Step2 = ({ onNext, onPrevious, updateRegisterInfo, registerInfo, uploadedI
     
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
-         
+    
           if (file.size <= MAX_FILE_SIZE && isSupportedFileType(file.type)) {
-           
             uploadedImages.push(file);
           } else {
-          
+            
           }
         }
     
         const updatedInfo = { ...registerInfo };
-        updatedInfo.image = uploadedImages.length > 0 ? uploadedImages[0] : "";
+    
+       
+        if (uploadedImages.length > 0) {
+          updatedInfo.image = URL.createObjectURL(uploadedImages[0]);
+        } else {
+          updatedInfo.image = defaultProfilePicURL;
+        }
+    
         updatedInfo.images = uploadedImages;
     
         updateRegisterInfo(updatedInfo);
     
+     
         if (uploadedImages.length > 0) {
           const reader = new FileReader();
           reader.onload = (e) => {
@@ -183,11 +190,12 @@ const Step2 = ({ onNext, onPrevious, updateRegisterInfo, registerInfo, uploadedI
           };
           reader.readAsDataURL(uploadedImages[0]);
         } else {
-         
+          
           setImagePreview(defaultProfilePicURL);
         }
       }
     };
+    
     
    
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
@@ -267,12 +275,6 @@ const Step2 = ({ onNext, onPrevious, updateRegisterInfo, registerInfo, uploadedI
       handleImageUpload(uploadedImages);
       onPrevious();
     };
-  
-  
-    const handleNext = () => {
-      onNext();
-    };
-
    
     
     return (
@@ -423,7 +425,7 @@ const Step2 = ({ onNext, onPrevious, updateRegisterInfo, registerInfo, uploadedI
   
 
   const Register = () => {
-    const { registerInfo, updateRegisterInfo, registerUser, registerError } =
+    const { registerInfo, updateRegisterInfo, registerUser, registerError, isRegisterSuccess, setRegisterSuccess } =
       useContext(AuthContext);
     const [currentStep, setCurrentStep] = useState(1);
     const [errorModalOpen, setErrorModalOpen] = useState(false);
@@ -455,6 +457,10 @@ const Step2 = ({ onNext, onPrevious, updateRegisterInfo, registerInfo, uploadedI
   
     const handleImageUpload = (images) => {
       setUploadedImages(images);
+    };
+
+    const closeSuccessModal = () => {
+      setRegisterSuccess(false);
     };
   
     return (
@@ -494,6 +500,22 @@ const Step2 = ({ onNext, onPrevious, updateRegisterInfo, registerInfo, uploadedI
             </Col>
           </Row>
         </Form>
+
+
+        <Modal show={isRegisterSuccess} onHide={closeSuccessModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Registration Successful!</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Congratulations, you have successfully registered!</p>
+          </Modal.Body>
+          <Modal.Footer>
+          <Button variant="primary" onClick={closeSuccessModal}>
+            OK
+          </Button>
+          </Modal.Footer>
+        </Modal>
+
         <Modal show={errorModalOpen} onHide={closeErrorModal}>
           <Modal.Header closeButton>
             <Modal.Title>Error!</Modal.Title>

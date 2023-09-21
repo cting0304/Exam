@@ -7,6 +7,8 @@ export const AuthContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [registerError, setRegisterError] = useState(null);
     const [isRegisterLoading, setIsRegisterLoading] = useState(false);
+    const [isRegisterSuccess, setIsRegisterSuccess] = useState(false);
+
     const [registerInfo, setRegisterInfo] = useState({
         email: "",
         password: "",
@@ -24,9 +26,13 @@ export const AuthContextProvider = ({ children }) => {
         setRegisterInfo(info);
     }, []);
 
+    const setRegisterSuccess = () => {
+        setIsRegisterSuccess(true);
+      };
+      
 
 
-    const registerUser = useCallback(async (e) => {
+      const registerUser = useCallback(async (e) => {
         e.preventDefault();
       
         console.log("Register Info:", registerInfo);
@@ -35,9 +41,7 @@ export const AuthContextProvider = ({ children }) => {
         setRegisterError(null);
       
         const response = await postRequest(`/users/register`, registerInfo);
-        
-
-      
+    
         setIsRegisterLoading(false);
       
         if (response.error) {
@@ -46,8 +50,9 @@ export const AuthContextProvider = ({ children }) => {
       
         localStorage.setItem("User", JSON.stringify(response));
         setUser(response);
+        
+        setRegisterSuccess();
     }, [registerInfo]);
-
       
     return (
         <AuthContext.Provider
@@ -58,6 +63,8 @@ export const AuthContextProvider = ({ children }) => {
                 registerUser,
                 registerError,
                 isRegisterLoading,
+                isRegisterSuccess, 
+                setRegisterSuccess,
             }}
         >
             {children}
