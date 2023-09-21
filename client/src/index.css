@@ -1,0 +1,19 @@
+.form{
+  justify-content: center;
+  padding-top: 5%;
+}
+
+.custom{
+  background: rgba(255,255,255,0.35);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.175);
+}
+
+.text{
+  text-align: center;
+}
+
+.react-datepicker-wrapper {
+  display: block !important; 
+}
